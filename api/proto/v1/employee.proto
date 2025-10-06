@@ -1,0 +1,116 @@
+syntax = "proto3";
+package hr.employee.v1;
+
+option go_package="github.com/dmehra2102/hr-management-system/api/proto/v1;employeev1";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+service EmployeeService {
+    rpc GetEmployee(GetEmployeeRequest) returns (GetEmployeeResponse);
+    rpc ListEmployees(ListEmployeesRequest) returns (ListEmployeesResponse);
+    rpc DeleteEmployee(DeleteEmployeeRequest) returns (google.protobuf.Empty);
+    rpc CreateEmployee(CreateEmployeeRequest) returns (CreateEmployeeResponse);
+    rpc UpdateEmployee(UpdateEmployeeRequest) returns (UpdateEmployeeResponse);
+    rpc GetEmployeesByDepartment(GetEmployeesByDepartmentRequest) returns (ListEmployeesResponse);
+}
+
+message Employee {
+    string id = 1;
+    string employee_id = 2;
+    string first_name = 3;
+    string last_name = 4;
+    string email = 5;
+    string phone_number = 6;
+    string department_id = 7;
+    string position = 8;
+    double salary = 9;
+    google.protobuf.Timestamp hire_date = 10;
+    EmployeeStatus status = 11;
+    Address address = 12;
+    google.protobuf.Timestamp created_at = 13;
+    google.protobuf.Timestamp updated_at = 14;
+}
+
+enum EmployeeStatus {
+    EMPLOYEE_STATUS_UNSPECIFIED = 0;
+    EMPLOYEE_STATUS_ACTIVE = 1;
+    EMPLOYEE_STATUS_INACTIVE = 2;
+    EMPLOYEE_STATUS_TERMINATED = 3;
+    EMPLOYEE_STATUS_ON_LEAVE = 4;
+}
+
+message Address {
+    string street = 1;
+    string city = 2;
+    string state = 3;
+    string zip_code = 4;
+    string country = 5;
+}
+
+message CreateEmployeeRequest {
+    string employee_id = 1;
+    string first_name = 2;
+    string last_name = 3;
+    string email = 4;
+    string phone_number = 5;
+    string department_id = 6;
+    string position = 7;
+    double salary = 8;
+    google.protobuf.Timestamp hire_date = 9;
+    Address address = 10;
+}
+
+message CreateEmployeeResponse {
+    Employee employee = 1;
+}
+
+message GetEmployeeRequest {
+    string id = 1;
+}
+
+message GetEmployeeResponse {
+    Employee employee = 1;
+}
+
+message UpdateEmployeeRequest {
+    string id = 1;
+    string first_name = 2;
+    string last_name = 3;
+    string email = 4;
+    string phone_number = 5;
+    string department_id = 6;
+    string position = 7;
+    double salary = 8;
+    EmployeeStatus status = 9;
+    Address address = 10;
+}
+
+message UpdateEmployeeResponse {
+    Employee employee = 1;
+}
+
+message DeleteEmployeeRequest {
+    string id = 1;
+}
+
+message ListEmployeesRequest {
+    int32 page = 1;
+    int32 page_size = 2;
+    string search = 3;
+    string department_id = 4;
+    EmployeeStatus status = 5;
+}
+
+message ListEmployeesResponse {
+    repeated Employee employees = 1;
+    int32 total_count = 2;
+    int32 page = 3;
+    int32 page_size = 4;
+}
+
+message GetEmployeesByDepartmentRequest {
+    string department_id = 1;
+    int32 page = 2;
+    int32 page_size = 3;
+}

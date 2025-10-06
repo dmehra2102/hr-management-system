@@ -1,0 +1,74 @@
+syntax = "proto3";
+package hr.auth.v1;
+
+option go_package="github.com/dmehra2102/hr-management-system/api/proto/v1;authv1";
+
+import "google/protobuf/timestamp.proto";
+
+service AuthService {
+    rpc Login(LoginRequest) returns (LoginResponse);
+    rpc Logout(LogoutRequest) returns (LogoutResponse); 
+    rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse);
+    rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse);
+    rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse);
+}
+
+message LoginRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message LoginResponse {
+    string access_token = 1;
+    string refresh_token = 2;
+    google.protobuf.Timestamp expires_at = 3;
+    UserInfo user = 4;
+}
+
+message RefreshTokenRequest {
+    string refresh_token = 1;
+}
+
+message RefreshTokenResponse {
+    string access_token = 1;
+    string refresh_token = 2;
+    google.protobuf.Timestamp expires_at = 3;
+}
+
+message LogoutRequest {
+    string access_token = 1;
+}
+
+message LogoutResponse {
+    bool success = 1;
+    string message = 2;
+}
+
+message ValidateTokenRequest {
+    string access_token = 1;
+}
+
+message ValidateTokenResponse {
+    bool valid = 1;
+    UserInfo user = 2;
+}
+
+message ChangePasswordRequest {
+    string old_password = 1;
+    string new_password = 2;
+}
+
+message ChangePasswordResponse {
+    bool success = 1;
+    string message = 2;
+}
+
+message UserInfo {
+    string id = 1;
+    string employee_id = 2;
+    string email = 3;
+    string first_name = 4;
+    string last_name = 5;
+    string role = 6;
+    repeated string permissions = 7;
+}

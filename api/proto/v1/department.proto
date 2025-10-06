@@ -1,0 +1,78 @@
+syntax = "proto3";
+package hr.department.v1;
+
+option go_package="github.com/dmehra2102/hr-management-system/api/proto/v1;departmentv1";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+service DepartmentService {
+    rpc GetDepartment(GetDepartmentRequest) returns (GetDepartmentResponse);
+    rpc DeleteDepartment(DeleteDepartmentRequest) returns (google.protobuf.Empty);
+    rpc ListDepartments(ListDepartmentsRequest) returns (ListDepartmentsResponse);
+    rpc CreateDepartment(CreateDepartmentRequest) returns (CreateDepartmentResponse);
+    rpc UpdateDepartment(UpdateDepartmentRequest) returns (UpdateDepartmentResponse);
+}
+
+message Department{
+    string id = 1;
+    string name = 2;
+    string description = 3;
+    string manager_id = 4;
+    string manager_name = 5;
+    int32 employee_count = 6;
+    double budget = 7;
+    string location = 8;
+    google.protobuf.Timestamp created_at = 9;
+    google.protobuf.Timestamp updated_at = 10;
+}
+
+message CreateDepartmentRequest {
+    string name = 1;
+    string description = 2;
+    string manager_id = 3;
+    double budget = 4;
+    string location = 5;
+}
+
+message CreateDepartmentResponse {
+    Department department = 1;
+}
+
+message GetDepartmentRequest {
+    string id = 1;
+}
+
+message GetDepartmentResponse {
+    Department department = 1;
+}
+
+message UpdateDepartmentRequest {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+    string manager_id = 4;
+    double budget = 5;
+    string location = 6;
+}
+
+message UpdateDepartmentResponse {
+    Department department = 1;
+}
+
+message DeleteDepartmentRequest {
+    string id = 1;
+}
+
+message ListDepartmentsRequest {
+    int32 page = 1;
+    int32 page_size = 2;
+    string search = 3;
+}
+
+message ListDepartmentsResponse {
+    repeated Department departments = 1;
+    int32 total_count = 2;
+    int32 page = 3;
+    int32 page_size = 4;
+}
