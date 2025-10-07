@@ -1,7 +1,7 @@
 syntax = "proto3";
 package hr.auth.v1;
 
-option go_package="github.com/dmehra2102/hr-management-system/api/proto/v1;authv1";
+option go_package="./api/proto/v1/gen/auth;authv1";
 
 import "google/protobuf/timestamp.proto";
 

@@ -55,8 +55,7 @@ clean:
 # Generate protobuf files
 proto:
 	@echo "Generating protobuf files..."
-	@chmod +x scripts/generate-proto.sh
-	./scripts/generate-proto.sh
+	protoc --proto_path=api\proto\v1 --go_out=. --go-grpc_out=. .\api\proto\v1\auth.proto .\api\proto\v1\department.proto .\api\proto\v1\employee.proto .\api\proto\v1\leave.proto .\api\proto\v1\performance.proto
 
 # Run database migrations up
 migrate-up:
