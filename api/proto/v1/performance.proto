@@ -1,0 +1,156 @@
+syntax = "proto3";
+package hr.performance.v1;
+
+option go_package = "github.com/dmehra2102/hr-management-system/api/proto/v1;performancev1";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+service PerformanceService {
+    rpc DeletePerformanceReview(DeletePerformanceReviewRequest) returns (google.protobuf.Empty);
+    rpc GetPerformanceReview(GetPerfromanceReviewRequest) returns (GetPerformanceReviewResponse);
+    rpc ListPerformanceReviews(ListPerformanceReviewsRequest) returns (ListPerformanceReviewsResponse);
+    rpc UpdatePerformanceReview(UpdatePerfromanceReviewRequest) returns (UpdatePerfromanceReviewResponse);
+    rpc SubmitPerformanceReview(SubmitPerformanceReviewRequest) returns (SubmitPerformanceReviewResponse);
+    rpc CreatePerformanceReview(CreatePerformanceReviewRequest) returns (CreatePerformanceReqviewResponse);
+    rpc GetEmployeePerformanceHistory(GetEmployeePerformanceHistoryRequest) returns (GetEmployeePerformanceHistoryResponse);
+}
+
+message PerformanceReview {
+    string id = 1;
+    string employee_id = 2;
+    string employee_name = 3;
+    string reviewer_id = 4;
+    string reviewer_name = 5;
+    ReviewPeriod review_period = 6;
+    ReviewStatus status = 7;
+    repeated Goal goals = 8;
+    repeated Competency competencies = 9;
+    string overall_comments = 10;
+    double overall_rating = 11;
+    google.protobuf.Timestamp review_date = 12;
+    google.protobuf.Timestamp submitted_at = 13;
+    google.protobuf.Timestamp created_at = 14;
+    google.protobuf.Timestamp updated_at = 15;
+}
+
+enum ReviewPeriod {
+    REVIEW_PERIOD_UNSPECIFIED = 0;
+    REVIEW_PERIOD_QUARTERLY = 1;
+    REVIEW_PERIOD_HALF_YEARLY = 2;
+    REVIEW_PERIOD_ANNUAL = 3;
+    REVIEW_PERIOD_PROBATION = 4;
+}
+
+enum ReviewStatus {
+    REVIEW_STATUS_UNSPECIFIED = 0;
+    REVIEW_STATUS_DRAFT = 1;
+    REVIEW_STATUS_SUBMITTED = 2;
+    REVIEW_STATUS_COMPLETED = 3;
+    REVIEW_STATUS_ARCHIVED = 4;
+}
+
+message Goal {
+    string id = 1;
+    string title = 2;
+    string description = 3;
+    double target_value = 4;
+    double achieved_value = 5;
+    string uint = 6;
+    GoalStatus status = 7;
+    double weight = 8;
+    string comments = 9;
+}
+
+enum GoalStatus {
+    GOAL_STATUS_UNSPECIFIED = 0;
+    GOAL_STATUS_NOT_STARTED = 1;
+    GOAL_STATUS_IN_PROGRESS = 2;
+    GOAL_STATUS_COMPLETED = 3;
+    GOAL_STATUS_EXCEEDED = 4;
+    GOAL_STATUS_NOT_ACHIEVED = 5;
+}
+
+message Competency {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+    double rating = 4;
+    double max_rating = 5;
+    string comments = 6;
+    double weight = 7;
+}
+
+message CreatePerformanceReviewRequest {
+    string employee_id = 1;
+    string reviewer_id = 2;
+    ReviewPeriod review_period = 3;
+    google.protobuf.Timestamp review_date = 4;
+    repeated Goal goals = 5;
+    repeated Competency competencies = 6;
+}
+
+message CreatePerformanceReviewResponse {
+    PerformanceReview performance_review = 1;
+}
+
+message GetPerformanceReviewRequest {
+    string id = 1;
+}
+
+message GetPerformanceReviewResponse {
+    PerformanceReview performance_review = 1;
+}
+
+message UpdatePerformanceReviewRequest {
+    string id = 1;
+    repeated Goal goals = 2;
+    repeated Competency competencies = 3;
+    string overall_comments = 4;
+    double overall_rating = 5;
+}
+
+message UpdatePerformanceReviewResponse {
+    PerformanceReview performance_review = 1;
+}
+
+message DeletePerformanceReviewRequest {
+    string id = 1;
+}
+
+message ListPerformanceReviewsRequest {
+    int32 page = 1;
+    int32 page_size = 2;
+    string employee_id = 3;
+    string reviewer_id = 4;
+    ReviewStatus status = 5;
+    ReviewPeriod review_period = 6;
+}
+
+message ListPerformanceReviewsResponse {
+    repeated PerformanceReview performance_reviews = 1;
+    int32 total_count = 2;
+    int32 page = 3;
+    int32 page_size = 4;
+}
+
+message SubmitPerformanceReviewRequest {
+    string id = 1;
+}
+
+message SubmitPerformanceReviewResponse {
+    PerformanceReview performance_review = 1;
+}
+
+message GetEmployeePerformanceHistoryRequest {
+    string employee_id = 1;
+    int32 page = 2;
+    int32 page_size = 3;
+}
+
+message GetEmployeePerformanceHistoryResponse {
+    repeated PerformanceReview performance_reviews = 1;
+    int32 total_count = 2;
+    int32 page = 3;
+    int32 page_size = 4;
+}

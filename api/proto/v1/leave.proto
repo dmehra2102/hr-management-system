@@ -1,0 +1,143 @@
+syntax = "proto3";
+package hr.leave.v1;
+
+option go_package = "github.com/dmehra2102/hr-management-system/api/proto/v1;leavev1";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+service LeaveService {
+    rpc GetLeaveRequest (GetLeaveRequestRequest) returns (GetLeaveRequestResponse);
+    rpc DeleteLeaveRequest (DeleteLeaveRequestRequest) returns (google.protobuf.Empty);
+    rpc ListLeaveRequests (ListLeaveRequestsRequest) returns (ListLeaveRequestsResponse);
+    rpc CreateLeaveRequest (CreateLeaveRequestRequest) returns (CreateLeaveRequestResponse);
+    rpc UpdateLeaveRequest (UpdateLeaveRequestRequest) returns (UpdateLeaveRequestResponse);
+    rpc RejectLeaveRequest (RejectLeaveRequestResquest) returns (RejectLeaveRequestResponse);
+    rpc ApproveLeaveRequest (ApproveLeaveRequestRequest) returns (ApproveLeaveRequestResponse);
+    rpc GetEmployeeLeaveBalance (GetEmployeeLeaveBalanceRequest) returns (GetEmployeeLeaveBalanceResponse);
+}
+
+message LeaveRequest {
+    string id = 1;
+    string employee_id = 2;
+    string employee_name = 3;
+    LeaveType leave_type = 4;
+    google.protobuf.Timestamp start_date = 5;
+    google.protobuf.Timestamp end_date = 6;
+    int32 days_requested = 7;
+    string reason = 8;
+    LeaveStatus leave_status = 9;
+    string approver_id = 10;
+    string approver_name = 11;
+    string comments = 12;
+    google.protobuf.Timestamp approved_at = 13;
+    google.protobuf.Timestamp created_at = 14;
+    google.protobuf.Timestamp updated_at = 15;
+}
+
+enum LeaveType {
+    LEAVE_TYPE_UNSPECIFIED = 0;
+    LEAVE_TYPE_ANNUAL = 1;
+    LEAVE_TYPE_SICK = 2;
+    LEAVE_TYPE_MATERNITY = 3;
+    LEAVE_TYPE_PATERNITY = 4;
+    LEAVE_TYPE_EMERGENCY = 5;
+    LEAVE_TYPE_PERSONAL = 6;
+}
+
+enum LeaveStatus {
+    LEAVE_STATUS_UNSPECIFIED = 0;
+    LEAVE_STATUS_PENDING = 1;
+    LEAVE_STATUS_APPROVED = 2;
+    LEAVE_STATUS_REJECTED = 3;
+    LEAVE_STATUS_CANCELLED = 4;
+}
+
+message LeaveBalance {
+    string employee_id = 1;
+    LeaveType leave_type = 2;
+    int32 total_days = 3;
+    int32 used_days = 4;
+    int32 remaining_days = 5;
+    int32 year = 6;
+}
+
+message CreateLeaveRequestRequest {
+    string employee_id = 1;
+    LeaveType leave_type = 2;
+    google.protobuf.Timestamp start_date = 3;
+    google.protobuf.Timestamp end_date = 4;
+    string reason = 5;
+}
+
+message CreateLeaveRequestResponse {
+    LeaveRequest leave_request = 1;
+}
+
+message GetLeaveRequestRequest {
+    string id = 1;
+}
+
+message GetLevelRequestResponse {
+    LeaveRequest leave_request = 1;
+}
+
+message UpdateLeaveRequestRequest {
+    string id = 1;
+    LeaveType leave_type = 2;
+    google.protobuf.Timestamp start_date = 3;
+    google.protobuf.Timestamp end_date = 4;
+    string reason = 5;
+}
+
+message UpdateLeaveRequestResponse {
+    LeaveRequest leave_request = 1;
+}
+
+message DeleteLeaveRequestRequest {
+    string id = 1;
+}
+
+message ListLeaveRequestsRequest {
+    int32 page = 1;
+    int32 page_size = 2;
+    string employee_id = 3;
+    LeaveStatus status = 4;
+    LeaveType leave_type = 5;
+}
+
+message ListLeaveRequestsResponse {
+    repeated LeaveRequest leave_requests = 1;
+    int32 total_count = 2;
+    int32 page = 3;
+    int32 page_size = 4;
+}
+
+message ApproveLeaveRequestRequest {
+    string id = 1;
+    string approver_id = 2;
+    string comments = 3;
+}
+
+message ApproveLeaveRequestResponse {
+    LeaveRequest leave_request = 1;
+}
+
+message RejectLeaveRequestRequest {
+    string id = 1;
+    string approver_id = 2;
+    string comments = 3;
+}
+
+message RejectLeaveRequestResponse {
+    LeaveRequest leave_request = 1;
+}
+
+message GetEmployeeLeaveBalanceRequest {
+    string employee_id = 1;
+    int32 year = 2;
+}
+
+message GetEmployeeLeaveBalanceResponse {
+    repeated LeaveBalance leave_balances = 1;
+}
