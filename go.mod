@@ -3,6 +3,7 @@ module github.com/dmehra2102/hr-management-system
 go 1.25.1
 
 require (
+	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/viper v1.21.0
 	google.golang.org/grpc v1.76.0
 	google.golang.org/protobuf v1.36.10
