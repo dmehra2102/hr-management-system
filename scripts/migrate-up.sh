@@ -17,6 +17,6 @@ if ! command -v migrate &> /dev/null; then
 fi
 
 # Run migrations
-migrate -path internal/database/migrations -database "$DB_URL" up
+migrate -path internal/database/migrations -database "$DB_URL" -verbose up
 
 echo "✅ Database migrations completed successfully!"

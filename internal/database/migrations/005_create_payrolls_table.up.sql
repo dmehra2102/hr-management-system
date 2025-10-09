@@ -1,24 +1,24 @@
 CREATE TABLE IF NOT EXISTS payroll (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     employee_id UUID NOT NULL REFERENCES employees(id) ON DELETE CASCADE,
-    pay_period_start_date DATE NOT NULL,
-    pay_period_end_date DATE NOT NULL,
+    pay_period_start DATE NOT NULL,
+    pay_period_end DATE NOT NULL,
     pay_date DATE NOT NULL,
-
+    
     -- Earnings
-    basic_salary DECIMAL(15,2) NOT NULL DEFAULT 0,
-    overtime_hours DECIMAL(8,2) DEFAULT 0,
-    overtime_rate DECIMAL(10,2) DEFAULT 0,
-    overtime_pay DECIMAL(15,2) DEFAULT 0,
+    basic_salary DECIMAL(15, 2) NOT NULL DEFAULT 0,
+    overtime_hours DECIMAL(8, 2) DEFAULT 0,
+    overtime_rate DECIMAL(10, 2) DEFAULT 0,
+    overtime_pay DECIMAL(15, 2) DEFAULT 0,
     bonus DECIMAL(15, 2) DEFAULT 0,
     commission DECIMAL(15, 2) DEFAULT 0,
     allowances DECIMAL(15, 2) DEFAULT 0,
-    gross_pay DECIMAL(15,2) GENERATED ALWAYS AS (
+    gross_pay DECIMAL(15, 2) GENERATED ALWAYS AS (
         basic_salary + overtime_pay + bonus + commission + allowances
     ) STORED,
-
+    
     -- Deductions
-    tax_federal DECIMAL(15,2) DEFAULT 0,
+    tax_federal DECIMAL(15, 2) DEFAULT 0,
     tax_state DECIMAL(15, 2) DEFAULT 0,
     tax_social_security DECIMAL(15, 2) DEFAULT 0,
     tax_medicare DECIMAL(15, 2) DEFAULT 0,
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS payroll (
     ) STORED,
     
     -- Net pay
-    net_pay DECIMAL(15, 2) GENERATED ALWAYS AS (gross_pay - total_deductions) STORED,
+    net_pay DECIMAL(15, 2),
     
     -- Status and metadata
     status VARCHAR(20) DEFAULT 'DRAFT' CHECK (status IN ('DRAFT', 'PROCESSED', 'PAID', 'CANCELLED')),
@@ -44,6 +44,8 @@ CREATE TABLE IF NOT EXISTS payroll (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     
+    UNIQUE(employee_id, pay_period_start, pay_period_end),
+
     -- Constraints
     CONSTRAINT valid_pay_period CHECK (pay_period_end >= pay_period_start),
     CONSTRAINT non_negative_salary CHECK (basic_salary >= 0),
@@ -51,6 +53,7 @@ CREATE TABLE IF NOT EXISTS payroll (
     CONSTRAINT non_negative_overtime_rate CHECK (overtime_rate >= 0)
 );
 
+-- Create payroll history for tracking changes
 CREATE TABLE IF NOT EXISTS payroll_history (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     payroll_id UUID NOT NULL REFERENCES payroll(id) ON DELETE CASCADE,
@@ -72,10 +75,6 @@ CREATE INDEX IF NOT EXISTS idx_payroll_processed_by ON payroll(processed_by);
 CREATE INDEX IF NOT EXISTS idx_payroll_history_payroll_id ON payroll_history(payroll_id);
 CREATE INDEX IF NOT EXISTS idx_payroll_history_changed_by ON payroll_history(changed_by);
 CREATE INDEX IF NOT EXISTS idx_payroll_history_changed_at ON payroll_history(changed_at);
-
--- Create unique constraint to prevent duplicate payroll for same period
-CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_employee_pay_period 
-ON payroll(employee_id, pay_period_start, pay_period_end)
 
 -- Create triggers
 CREATE TRIGGER update_payroll_updated_at
@@ -105,3 +104,17 @@ CREATE TRIGGER track_payroll_changes_trigger
     AFTER INSERT OR UPDATE ON payroll
     FOR EACH ROW
     EXECUTE FUNCTION track_payroll_changes();
+
+-- Create function to calculate net pay
+CREATE OR REPLACE FUNCTION calculate_net_pay()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.net_pay := (NEW.basic_salary + NEW.overtime_pay + NEW.bonus + NEW.commission + NEW.allowances) - (NEW.tax_federal + NEW.tax_state + NEW.tax_social_security + NEW.tax_medicare + NEW.insurance_health + NEW.insurance_dental + NEW.insurance_vision + NEW.retirement_401k + NEW.other_deductions);
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+CREATE TRIGGER calculate_net_pay_before_insert_update
+    BEFORE INSERT OR UPDATE ON payroll
+    FOR EACH ROW
+    EXECUTE FUNCTION calculate_net_pay();
