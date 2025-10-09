@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS payroll (
     CONSTRAINT non_negative_salary CHECK (basic_salary >= 0),
     CONSTRAINT non_negative_overtime_hours CHECK (overtime_hours >= 0),
     CONSTRAINT non_negative_overtime_rate CHECK (overtime_rate >= 0)
-)
+);
 
 CREATE TABLE IF NOT EXISTS payroll_history (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

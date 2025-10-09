@@ -27,15 +27,15 @@ CREATE TABLE IF NOT EXISTS employees (
     -- Metadata
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-)
+);
 
 -- Create indexes for faster lookups
 CREATE INDEX IF NOT EXISTS idx_employees_employee_id ON employees(employee_id);
 CREATE INDEX IF NOT EXISTS idx_employees_email ON employees(email);
 CREATE INDEX IF NOT EXISTS idx_employees_department_id ON employees(department_id);
 CREATE INDEX IF NOT EXISTS idx_employees_status ON employees(status);
-CREATE INDEX IF NOT EXISTS idx_exployees_hire_date ON employees(hire_date);
-CREATE INDEX IF NOT EXISTS idx_exployees_name ON employees(first_name,last_name);
+CREATE INDEX IF NOT EXISTS idx_employees_hire_date ON employees(hire_date);
+CREATE INDEX IF NOT EXISTS idx_employees_name ON employees(first_name,last_name);
 
 -- Create trigger to update updated_at
 CREATE TRIGGER update_employees_updated_at

@@ -1,0 +1,65 @@
+version: "3.8"
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: hr_postgres
+    environment:
+      POSTGRES_USER: hruser
+      POSTGRES_PASSWORD: hrpassword
+      POSTGRES_DB: hrmanagement
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./internal/database/migrations:/migrations
+    networks:
+      - hr_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hruser -d hrmanagement"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis for caching (optional)
+  redis:
+    image: redis:7-alpine
+    container_name: hr_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - hr_network
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+  # Database migration container
+  migrate:
+    image: migrate/migrate
+    container_name: hr_migrate
+    volumes:
+      - ./internal/database/migrations:/migrations
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - hr_network
+    command:
+      [
+        "-path",
+        "/migrations",
+        "-database",
+        "postgres://hruser:hrpassword@postgres:5432/hrmanagement?sslmode=disable",
+        "up",
+      ]
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  hr_network:
+    driver: bridge

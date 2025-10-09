@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS leaves (
     -- Constraints
     CONSTRAINT valid_date_range CHECK (end_date >= start_date),
     CONSTRAINT positive_days CHECK (days_requested > 0)
-)
+);
 
 -- Create leave balances table
 CREATE TABLE IF NOT EXISTS leave_balances (
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS leave_balances (
     CONSTRAINT non_negative_total CHECK (total_days >= 0),
     CONSTRAINT non_negative_used CHECK (used_days >= 0),
     CONSTRAINT valid_used_days CHECK (used_days <= total_days)
-)
+);
 
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_leaves_employee_id ON leaves(employee_id);
