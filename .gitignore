@@ -1,0 +1,112 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+coverage.html
+
+# Dependency directories (remove the comment below to include it)
+# vendor/
+
+# Go workspace file
+go.work
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Application specific
+bin/
+build/
+dist/
+logs/
+uploads/
+temp/
+*.log
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Generated protobuf files
+api/proto/v1/gen/
+*.pb.go
+*_grpc.pb.go
+
+# Docker volumes
+docker-volumes/
+
+# Temporary files
+tmp/
+.tmp/
+
+# Certificates and keys
+*.pem
+*.key
+*.crt
+*.p12
+
+# Backup files
+*.bak
+*.backup
+
+# Local configuration
+config.local.yaml
+config.local.json
+
+# Node modules (if any frontend is added)
+node_modules/
+
+# Python files (if any Python tools are used)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+
+# JetBrains
+.idea/
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*

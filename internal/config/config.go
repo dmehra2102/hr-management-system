@@ -26,7 +26,7 @@ type Config struct {
 	JWTExpiryHours int    `mapstructure:"JWT_EXPIRY_HOURS"`
 
 	// Redis settings
-	Redis RedisConfig `mapstructure:"RATE_LIMIT_REQUESTS_PER_MINUTE"`
+	Redis RedisConfig `mapstructure:",squash"`
 
 	// Rate limiting
 	RateLimitRequestsPerMinute int `mapstructure:"RATE_LIMIT_REQUESTS_PER_MINUTE"`
@@ -62,8 +62,13 @@ type RedisConfig struct {
 
 func (d DatabaseConfig) DSN() string {
 	return fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
-		d.Host, d.Port, d.User, d.Password, d.Name, d.User,
+		d.Host, d.Port, d.User, d.Password, d.Name, d.SSLMode,
 	)
+}
+
+func (d  DatabaseConfig) MigrationDSN() string {
+    return fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable",
+        d.User, d.Password, d.Host, d.Port, d.Name)
 }
 
 func (r RedisConfig) RedisAddr() string {
@@ -120,6 +125,7 @@ func setDefaults() {
 	viper.SetDefault("DB_SSL_MODE", "disable")
 
 	// JWT defaults
+	viper.SetDefault("JWT_SECRET", "39w0jcnsu9dns8end8e30dxk20snjw9enn9fnci39dn73839djd93")
 	viper.SetDefault("JWT_EXPIRY_HOURS", 24)
 
 	// Redis defaults

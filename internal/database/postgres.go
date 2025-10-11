@@ -68,12 +68,14 @@ func (d *Database) Close() error {
 
 // Migrate run database migrations
 func (d *Database) Migrate() error {
-	migrationPath, err := filepath.Abs("internal/database/migrations")
+	migrationPath, err := filepath.Abs("./internal/database/migrations")
 	if err != nil {
 		return fmt.Errorf("failed to get migrations path: %w", err)
 	}
 
-	m, err := migrate.New(fmt.Sprintf("file://%s", migrationPath), d.config.DSN())
+	migrationPath = filepath.ToSlash(migrationPath)
+
+	m, err := migrate.New(fmt.Sprintf("file://%s", migrationPath), d.config.MigrationDSN())
 	if err != nil {
 		return fmt.Errorf("failed to create migrate instance: %w", err)
 	}
@@ -93,12 +95,14 @@ func (d *Database) Migrate() error {
 
 // MigrateDown rolls back all migrations
 func (d *Database) MigrationDone() error {
-	migrationPath, err := filepath.Abs("internal/database/migrations")
+	migrationPath, err := filepath.Abs("./internal/database/migrations")
 	if err != nil {
 		return fmt.Errorf("failed to get migrations path: %w", err)
 	}
 
-	m, err := migrate.New(fmt.Sprintf("file://%s", migrationPath), d.config.DSN())
+	migrationPath = filepath.ToSlash(migrationPath)
+
+	m, err := migrate.New(fmt.Sprintf("file://%s", migrationPath), d.config.MigrationDSN())
 	if err != nil {
 		return fmt.Errorf("failed to create migrate instance: %w", err)
 	}
@@ -118,12 +122,14 @@ func (d *Database) MigrationDone() error {
 
 // MigrateToVersion migrates to a specific version
 func (d *Database) MigrationToVersion() (uint, bool, error) {
-	migrationPath, err := filepath.Abs("internal/database/migrations")
+	migrationPath, err := filepath.Abs("/internal/database/migrations")
 	if err != nil {
 		return 0, false, fmt.Errorf("failed to get migrations path: %w", err)
 	}
 
-	m, err := migrate.New(fmt.Sprintf("file://%s", migrationPath), d.config.DSN())
+	migrationPath = filepath.ToSlash(migrationPath)
+
+	m, err := migrate.New(fmt.Sprintf("file://%s", migrationPath), d.config.MigrationDSN())
 	if err != nil {
 		return 0, false, fmt.Errorf("failed to create migrate instance: %w", err)
 	}
