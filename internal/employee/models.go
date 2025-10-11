@@ -34,7 +34,7 @@ type Employee struct {
 	Country string  `json:"country" gorm:"default:'IN'"`
 
 	// Authentication
-	PasswordHash string     `json:"-" gorm:"column:password_hash"`
+	PasswordHash *string    `json:"-" gorm:"column:password_hash"`
 	Role         string     `json:"role" gorm:"default:'EMPLOYEE';check:role IN ('ADMIN', 'HR', 'MANAGER', 'EMPLOYEE')"`
 	LastLoginAt  *time.Time `json:"last_login_at,omitempty"`
 
@@ -100,7 +100,7 @@ type ListEmployeesResponse struct {
 	Employees  []*Employee `json:"employees"`
 	TotalCount int64       `json:"total_count"`
 	Page       int         `json:"page"`
-	PageSie    int         `json:"page_size"`
+	PageSize   int         `json:"page_size"`
 }
 
 func (e *Employee) ToProto() *employeepb.Employee {

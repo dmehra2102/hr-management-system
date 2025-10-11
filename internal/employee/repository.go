@@ -135,7 +135,7 @@ func (r *repository) List(ctx context.Context, req *ListEmployeesRequest) (*List
 		Employees:  employees,
 		TotalCount: totalCount,
 		Page:       req.Page,
-		PageSie:    req.PageSize,
+		PageSize:   req.PageSize,
 	}, nil
 }
 
