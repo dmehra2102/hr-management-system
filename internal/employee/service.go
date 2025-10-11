@@ -3,6 +3,7 @@ package employee
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/dmehra2102/hr-management-system/pkg/logger"
 	"golang.org/x/crypto/bcrypt"
@@ -25,7 +26,7 @@ type service struct {
 }
 
 func NewService(repo Repository, logger *logger.Logger) Service {
-	return &service{repo: repo, logger: logger}
+	return &service{repo: repo, logger: logger.ServiceLogger("employee")}
 }
 
 func (s *service) DeleteEmployee(ctx context.Context, id string) error {
@@ -204,4 +205,27 @@ func (s *service) hashPassword(password string) (string, error) {
 		return "", fmt.Errorf("failed to hash password: %w", err)
 	}
 	return string(hashedPassword), nil
+}
+
+func (s *service) validateEmployee(employee *Employee) error {
+	if employee.FirstName == "" {
+		return fmt.Errorf("first name is required")
+	}
+	if employee.LastName == "" {
+		return fmt.Errorf("last name is required")
+	}
+	if employee.Email == "" {
+		return fmt.Errorf("email is required")
+	}
+	if employee.EmployeeID == "" {
+		return fmt.Errorf("employee ID is required")
+	}
+	if employee.HireDate.IsZero() {
+		return fmt.Errorf("hire date is required")
+	}
+	if employee.HireDate.After(time.Now()) {
+		return fmt.Errorf("hire date cannot be in the future")
+	}
+
+	return nil
 }
