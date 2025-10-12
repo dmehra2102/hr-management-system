@@ -66,9 +66,9 @@ func (d DatabaseConfig) DSN() string {
 	)
 }
 
-func (d  DatabaseConfig) MigrationDSN() string {
-    return fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable",
-        d.User, d.Password, d.Host, d.Port, d.Name)
+func (d DatabaseConfig) MigrationDSN() string {
+	return fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable",
+		d.User, d.Password, d.Host, d.Port, d.Name)
 }
 
 func (r RedisConfig) RedisAddr() string {

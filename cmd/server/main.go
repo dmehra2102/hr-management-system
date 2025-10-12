@@ -27,28 +27,28 @@ import (
 )
 
 type Server struct {
-	config *config.Config
-	logger *logger.Logger
-	db *database.Database
+	config     *config.Config
+	logger     *logger.Logger
+	db         *database.Database
 	grpcServer *grpc.Server
 }
 
-func main(){
-	cfg,err := config.Load()
+func main() {
+	cfg, err := config.Load()
 	if err != nil {
-		fmt.Printf("Failed to load configuration: %v\n",err)
+		fmt.Printf("Failed to load configuration: %v\n", err)
 		os.Exit(1)
 	}
 
 	log := logger.NewLogger(cfg.LogLevel, cfg.LogFormat)
-	log.Info("Starting HR Management System", "version","1.0.0","env", cfg.AppEnv)
+	log.Info("Starting HR Management System", "version", "1.0.0", "env", cfg.AppEnv)
 
-	db,err := database.New(cfg.Database)
+	db, err := database.New(cfg.Database)
 	if err != nil {
 		log.Error("Failed to initialize database", "error", err)
 		os.Exit(1)
 	}
-	defer func ()  {
+	defer func() {
 		if err := db.Close(); err != nil {
 			log.Error("Failed to close database connection", "error", err)
 		}
@@ -62,7 +62,7 @@ func main(){
 	server := &Server{
 		config: cfg,
 		logger: log,
-		db: db,
+		db:     db,
 	}
 
 	// Start server
@@ -98,7 +98,7 @@ func (s *Server) Start() error {
 		reflection.Register(s.grpcServer)
 	}
 
-	listener,err := net.Listen("tcp", fmt.Sprintf(":%d", s.config.GRPCPort))
+	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", s.config.GRPCPort))
 	if err != nil {
 		return fmt.Errorf("failed to listen on port %d: %w", s.config.GRPCPort, err)
 	}
@@ -106,9 +106,9 @@ func (s *Server) Start() error {
 	s.logger.Info("gRPC server starting", "port", s.config.GRPCPort)
 
 	errChan := make(chan error, 1)
-	go func ()  {
+	go func() {
 		if err := s.grpcServer.Serve(listener); err != nil {
-			errChan <- fmt.Errorf("gRPC server error: %w",err)
+			errChan <- fmt.Errorf("gRPC server error: %w", err)
 		}
 	}()
 
@@ -124,7 +124,7 @@ func (s *Server) Start() error {
 	}
 }
 
-func (s *Server) registerServices(){
+func (s *Server) registerServices() {
 	// jwtService := auth.NewJWTService(s.config.JWTSecret, time.Duration(s.config.JWTExpiryHours) * time.Hour)
 
 	employeeRepo := employee.NewRepository(s.db.GetDB())
@@ -141,17 +141,17 @@ func (s *Server) registerServices(){
 func (s *Server) shutdown() error {
 	s.logger.Info("Graxeful shutdown completed")
 
-	ctx,cancel := context.WithTimeout(context.Background(), 30 *time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
 	shutdownCh := make(chan struct{})
 
-	go func ()  {
+	go func() {
 		s.grpcServer.GracefulStop()
 		close(shutdownCh)
 	}()
 
-	select{
+	select {
 	case <-shutdownCh:
 		return nil
 	case <-ctx.Done():
