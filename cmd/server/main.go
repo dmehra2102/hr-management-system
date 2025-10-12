@@ -80,12 +80,14 @@ func (s *Server) Start() error {
 			grpclogrus.StreamServerInterceptor(s.logger.GetLogrusEntry()),
 			grpcauth.StreamServerInterceptor(middleware.AuthFunc),
 			grpcrecovery.StreamServerInterceptor(),
+			middleware.StreamRecoveryInterceptor(s.logger),
 		)),
 		grpc.UnaryInterceptor(grpcmiddleware.ChainUnaryServer(
 			grpctags.UnaryServerInterceptor(),
 			grpclogrus.UnaryServerInterceptor(s.logger.GetLogrusEntry()),
 			grpcauth.UnaryServerInterceptor(middleware.AuthFunc),
 			grpcrecovery.UnaryServerInterceptor(),
+			middleware.RecoveryInterceptor(s.logger),
 		)),
 	)
 

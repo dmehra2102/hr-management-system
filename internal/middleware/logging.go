@@ -101,10 +101,10 @@ func RecoveryInterceptor(log *logger.Logger) grpc.UnaryServerInterceptor {
 }
 
 func StreamRecoveryInterceptor(log *logger.Logger) grpc.StreamServerInterceptor {
-	return func(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) (err error) {
+	return func(srv any, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) (err error) {
 		defer func() {
 			if r := recover(); r != nil {
-				log.WithFields(map[string]interface{}{
+				log.WithFields(map[string]any{
 					"method": info.FullMethod,
 					"panic":  r,
 				}).Error("Stream panic recovered")
