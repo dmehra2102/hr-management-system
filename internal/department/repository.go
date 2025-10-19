@@ -8,8 +8,8 @@ import (
 	"gorm.io/gorm"
 )
 
-type Repostiory interface {
-	Create(ctx context.Context, req *CreateDepartmentRequest) error
+type Repository interface {
+	Create(ctx context.Context, department *Department) error
 	GetByID(ctx context.Context, id string) (*Department, error)
 	GetByName(ctx context.Context, name string) (*Department, error)
 	Update(ctx context.Context, id string, req *UpdateDepartmentRequest) error
@@ -22,12 +22,12 @@ type repository struct {
 	db *gorm.DB
 }
 
-func NewRepository(db *gorm.DB) Repostiory {
+func NewRepository(db *gorm.DB) Repository {
 	return &repository{db: db}
 }
 
-func (r *repository) Create(ctx context.Context, req *CreateDepartmentRequest) error {
-	if err := r.db.WithContext(ctx).Model(&Department{}).Create(req).Error; err != nil {
+func (r *repository) Create(ctx context.Context, department *Department) error {
+	if err := r.db.WithContext(ctx).Create(department).Error; err != nil {
 		return fmt.Errorf("failed to create department : %w", err)
 	}
 	return nil
@@ -41,7 +41,7 @@ func (r *repository) GetByID(ctx context.Context, id string) (*Department, error
 		First(&department).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return nil, fmt.Errorf("department with id %s not found", id)
+			return nil, fmt.Errorf("department with id %s not found: %w", id, err)
 		}
 		return nil, fmt.Errorf("failed to get department by ID (%s) : %w", id, err)
 	}
@@ -56,7 +56,7 @@ func (r *repository) GetByName(ctx context.Context, name string) (*Department, e
 		First(&department).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return nil, fmt.Errorf("department with name %s not found", name)
+			return nil, fmt.Errorf("department with name %s not found: %w", name, err)
 		}
 		return nil, fmt.Errorf("failed to get department by name (%s) : %w", name, err)
 	}
@@ -76,7 +76,7 @@ func (r *repository) Update(ctx context.Context, id string, req *UpdateDepartmen
 		updateData["budget"] = req.Budget
 	}
 	if req.ManagerID != nil && *req.ManagerID != "" {
-		updateData["manager_id"] = req.ManagerID
+		updateData["manager_id"] = *req.ManagerID
 	}
 	if req.Name != "" {
 		updateData["name"] = req.Name

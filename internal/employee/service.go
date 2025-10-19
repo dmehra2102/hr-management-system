@@ -154,7 +154,7 @@ func (s *service) ListEmployees(ctx context.Context, req *ListEmployeesRequest) 
 	if req.PageSize < 1 {
 		req.PageSize = 10
 	}
-	if req.Page > 100 {
+	if req.PageSize > 100 {
 		req.PageSize = 100
 	}
 

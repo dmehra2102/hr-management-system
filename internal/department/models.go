@@ -101,24 +101,6 @@ func FromCreateRequest(req *CreateDepartmentRequest) *Department {
 	}
 }
 
-func (d *Department) ApplyUpdate(req *UpdateDepartmentRequest) {
-	if req.Name != "" {
-		d.Name = req.Name
-	}
-	if req.Location != "" {
-		d.Name = req.Name
-	}
-	if req.Description != "" {
-		d.Description = req.Description
-	}
-	if req.ManagerID != nil {
-		d.ManagerID = req.ManagerID
-	}
-	if req.Budget > 0 {
-		d.Budget = req.Budget
-	}
-}
-
 func (d *Department) HasManager() bool {
 	return d.ManagerID != nil && *d.ManagerID != ""
 }
