@@ -11,8 +11,8 @@ import (
 type Service interface {
 	CreateDepartment(ctx context.Context, req *CreateDepartmentRequest) (*Department, error)
 	GetDepartment(ctx context.Context, id string) (*Department, error)
-	UpdateDocument(ctx context.Context, id string, req *UpdateDepartmentRequest) (*Department, error)
-	DeleteDocument(ctx context.Context, id string) error
+	UpdateDepartment(ctx context.Context, id string, req *UpdateDepartmentRequest) (*Department, error)
+	DeleteDepartment(ctx context.Context, id string) error
 	ListDepartments(ctx context.Context, req *ListDepartmentsRequest) (*ListDepartmentsResponse, error)
 }
 
@@ -62,7 +62,7 @@ func (s *service) GetDepartment(ctx context.Context, id string) (*Department, er
 	return department, nil
 }
 
-func (s *service) DeleteDocument(ctx context.Context, id string) error {
+func (s *service) DeleteDepartment(ctx context.Context, id string) error {
 	s.logger.Info("Deleting employee", "id", id)
 	if err := s.repo.Delete(ctx, id); err != nil {
 		s.logger.Error("Failed to delete department", "id", id, "error", err)
@@ -73,7 +73,7 @@ func (s *service) DeleteDocument(ctx context.Context, id string) error {
 	return nil
 }
 
-func (s *service) UpdateDocument(ctx context.Context, id string, req *UpdateDepartmentRequest) (*Department, error) {
+func (s *service) UpdateDepartment(ctx context.Context, id string, req *UpdateDepartmentRequest) (*Department, error) {
 	s.logger.Info("Updating department", "id", id)
 
 	if err := s.repo.Update(ctx, id, req); err != nil {
