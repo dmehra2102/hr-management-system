@@ -242,42 +242,6 @@ func (lr *LeaveRequest) ApplyUpdate(req *UpdateLeaveRequestRequest) {
 	}
 }
 
-func (lr *LeaveRequest) Approve(approverID, comments string) {
-	lr.LeaveStatus = "APPROVED"
-	lr.ApproverID = &approverID
-	lr.Comments = comments
-	now := time.Now()
-	lr.ApprovedAt = &now
-}
-
-// Reject rejects the leave request
-func (lr *LeaveRequest) Reject(approverID, comments string) {
-	lr.LeaveStatus = "REJECTED"
-	lr.ApproverID = &approverID
-	lr.Comments = comments
-	now := time.Now()
-	lr.ApprovedAt = &now
-}
-
-// Cancel cancels the leave request
-func (lr *LeaveRequest) Cancel() {
-	lr.LeaveStatus = "CANCELLED"
-}
-
-func (lr *LeaveRequest) IsEditable() bool {
-	return lr.LeaveStatus == "PENDING"
-}
-
-// IsPending returns true if the leave request is pending
-func (lr *LeaveRequest) IsPending() bool {
-	return lr.LeaveStatus == "PENDING"
-}
-
-// IsApproved returns true if the leave request is approved
-func (lr *LeaveRequest) IsApproved() bool {
-	return lr.LeaveStatus == "APPROVED"
-}
-
 // GetRemainingDays calculates and returns remaining days
 func (lb *LeaveBalance) GetRemainingDays() int {
 	remaining := lb.TotalDays - lb.UsedDays
@@ -290,19 +254,6 @@ func (lb *LeaveBalance) GetRemainingDays() int {
 // HasSufficientBalance checks if there are sufficient days for a request
 func (lb *LeaveBalance) HasSufficientBalance(requestedDays int) bool {
 	return lb.GetRemainingDays() >= requestedDays
-}
-
-// DeductDays deducts days from the balance
-func (lb *LeaveBalance) DeductDays(days int) {
-	lb.UsedDays += days
-}
-
-// AddDays adds days back to the balance (for cancelled leaves)
-func (lb *LeaveBalance) AddDays(days int) {
-	lb.UsedDays -= days
-	if lb.UsedDays < 0 {
-		lb.UsedDays = 0
-	}
 }
 
 // calculateDaysRequested calculates the number of days between start and end date
