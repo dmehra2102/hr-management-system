@@ -11,12 +11,14 @@ import (
 
 	"github.com/dmehra2102/hr-management-system/internal/config"
 	"github.com/dmehra2102/hr-management-system/internal/database"
+	"github.com/dmehra2102/hr-management-system/internal/department"
 	"github.com/dmehra2102/hr-management-system/internal/employee"
 	"github.com/dmehra2102/hr-management-system/internal/middleware"
 	"github.com/dmehra2102/hr-management-system/pkg/logger"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
+	departmentpb "github.com/dmehra2102/hr-management-system/api/proto/v1/gen/department"
 	employeepb "github.com/dmehra2102/hr-management-system/api/proto/v1/gen/employee"
 
 	grpcmiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
@@ -128,13 +130,17 @@ func (s *Server) registerServices() {
 	// jwtService := auth.NewJWTService(s.config.JWTSecret, time.Duration(s.config.JWTExpiryHours) * time.Hour)
 
 	employeeRepo := employee.NewRepository(s.db.GetDB())
+	departmentRepo := department.NewRepository(s.db.GetDB())
 
 	employeeService := employee.NewService(employeeRepo, s.logger)
+	departmentService := department.NewService(departmentRepo, s.logger)
 
 	employeeHandler := employee.NewHandler(employeeService, s.logger)
+	departmentHandler := department.NewHandler(departmentService,s.logger)
 
 	employeepb.RegisterEmployeeServiceServer(s.grpcServer, employeeHandler)
-
+	departmentpb.RegisterDepartmentServiceServer(s.grpcServer, departmentHandler)
+	
 	s.logger.Info("All gRPC services registered successfully")
 }
 
